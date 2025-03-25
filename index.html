@@ -1,0 +1,1071 @@
+<!DOCTYPE html><html lang="pt-BR" class="scroll-smooth"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clone seu melhor atendente com IA | B3.tec</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#3a4cad', // dark blue - matte
+                        'secondary': '#6c44a7', // purple - matte
+                        'accent-1': '#e8be46', // yellow - matte
+                        'accent-2': '#e8884e', // orange - matte
+                        'dark': '#181818',
+                        'light': '#f8f8f8',
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #3a4cad;
+            --secondary: #6c44a7;
+            --accent-1: #e8be46;
+            --accent-2: #e8884e;
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .gradient-border {
+            position: relative;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            margin: -2px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            z-index: -1;
+        }
+
+        .icon-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .animated-icon {
+            font-size: 26px;
+            transition: all 0.3s ease;
+        }
+
+        .icon-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-container:hover .animated-icon {
+            transform: scale(1.2);
+        }
+
+        .section-transition {
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .section-transition.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dark .card {
+            background: #2a2a2a;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .card {
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card:hover::before {
+            opacity: 0.05;
+        }
+
+        .btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0) 0%, 
+                rgba(255,255,255,0.2) 50%, 
+                rgba(255,255,255,0) 100%);
+            transition: all 0.5s ease;
+        }
+
+        .btn:hover::after {
+            left: 100%;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .dark ::-webkit-scrollbar-track {
+            background: #2a2a2a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* Input animation */
+        .input-effect {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .effect-20 {
+            border: 1px solid #ccc;
+            padding: 15px 10px;
+            transition: 0.4s;
+            background: transparent;
+        }
+
+        .effect-20 ~ .focus-border:before,
+        .effect-20 ~ .focus-border:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-2);
+            transition: 0.3s;
+        }
+
+        .effect-20 ~ .focus-border:after {
+            top: auto;
+            bottom: 0;
+            left: auto;
+            right: 0;
+        }
+
+        .effect-20 ~ .focus-border i:before,
+        .effect-20 ~ .focus-border i:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 0;
+            background-color: var(--accent-2);
+            transition: 0.4s;
+        }
+
+        .effect-20 ~ .focus-border i:after {
+            left: auto;
+            right: 0;
+            top: auto;
+            bottom: 0;
+        }
+
+        .effect-20:focus ~ .focus-border:before,
+        .effect-20:focus ~ .focus-border:after {
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .effect-20:focus ~ .focus-border i:before,
+        .effect-20:focus ~ .focus-border i:after {
+            height: 100%;
+            transition: 0.4s;
+        }
+
+        .dark {
+            background-color: #181818;
+            color: #f8f8f8;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(232, 190, 70, 0.5),
+                             0 0 20px rgba(232, 190, 70, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(232, 136, 78, 0.7),
+                             0 0 30px rgba(232, 136, 78, 0.5);
+            }
+        }
+
+        .glow-text {
+            animation: glow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-light dark:bg-dark text-gray-800 dark:text-gray-200 overflow-x-hidden">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-md shadow-sm transition-all duration-300">
+        <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="text-3xl font-bold gradient-text">B3.tec</div>
+            </div>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="#features" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-accent-1 transition-colors duration-300">Recursos</a>
+                <a href="#industries" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-accent-1 transition-colors duration-300">Indústrias</a>
+                <a href="#how-it-works" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-accent-1 transition-colors duration-300">Como Funciona</a>
+                <a href="#faq" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-accent-1 transition-colors duration-300">FAQ</a>
+                <a href="#contact" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-accent-1 transition-colors duration-300">Contato</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
+                    <i class="fas fa-sun text-yellow-500 dark:hidden"></i>
+                    <i class="fas fa-moon text-indigo-300 hidden dark:block"></i>
+                </button>
+                
+                <a href="#try-free" class="hidden md:block gradient-bg text-white font-semibold py-2 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 btn">
+                    Experimente Grátis
+                </a>
+                
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden bg-white dark:bg-gray-800 shadow-lg rounded-b-2xl overflow-hidden transition-all duration-300 max-h-0 opacity-0">
+            <div class="px-4 py-3 space-y-3">
+                <a href="#features" class="block py-2 px-4 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">Recursos</a>
+                <a href="#industries" class="block py-2 px-4 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">Indústrias</a>
+                <a href="#how-it-works" class="block py-2 px-4 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">Como Funciona</a>
+                <a href="#faq" class="block py-2 px-4 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">FAQ</a>
+                <a href="#contact" class="block py-2 px-4 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">Contato</a>
+                <a href="#try-free" class="block py-2 px-4 text-center gradient-bg text-white font-semibold rounded-lg shadow-md">Experimente Grátis</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative py-20 md:py-32 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 dark:from-primary/5 dark:to-secondary/5"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-12 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                        <span>Clone seu melhor </span>
+                        <span class="gradient-text glow-text">atendente</span>
+                        <span> com IA</span>
+                    </h1>
+                    
+                    <p class="text-xl md:text-2xl mb-8 text-gray-700 dark:text-gray-300">
+                        Automação de IA que realmente gera lucro. Todo mundo fala sobre IA, mas como realmente ganhar dinheiro com ela?
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#try-free" class="gradient-bg text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl btn text-center">
+                            Experimente Grátis
+                        </a>
+                        <a href="#learn-more" class="border-2 border-primary dark:border-secondary text-primary dark:text-secondary font-semibold py-4 px-8 rounded-xl hover:bg-primary/5 dark:hover:bg-secondary/5 transition-colors duration-300 text-center">
+                            Saiba Mais
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative w-full max-w-md">
+                        <!-- Animated Bot Icon -->
+                        <div class="absolute -top-12 -right-12 animate-spin-slow opacity-20">
+                            <i class="fas fa-cog text-8xl text-secondary"></i>
+                        </div>
+                        
+                        <div class="p-8 rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-2xl border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-center mb-8">
+                                <div class="icon-container bg-primary/10 dark:bg-primary/20 animate-float">
+                                    <i class="fas fa-robot animated-icon text-primary dark:text-accent-1"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-3">
+                                    <div class="icon-container bg-secondary/10 dark:bg-secondary/20 h-12 w-12 flex-shrink-0">
+                                        <i class="fas fa-calendar-check animated-icon text-secondary dark:text-accent-2"></i>
+                                    </div>
+                                    <p class="text-gray-700 dark:text-gray-300">IA que agenda reuniões e faz acompanhamento <span class="font-bold text-primary dark:text-accent-1">= Mais vendas</span></p>
+                                </div>
+                                
+                                <div class="flex items-start gap-3">
+                                    <div class="icon-container bg-secondary/10 dark:bg-secondary/20 h-12 w-12 flex-shrink-0">
+                                        <i class="fas fa-file-alt animated-icon text-secondary dark:text-accent-2"></i>
+                                    </div>
+                                    <p class="text-gray-700 dark:text-gray-300">IA que automatiza a criação e a reutilização de conteúdo <span class="font-bold text-primary dark:text-accent-1">= Mais visibilidade</span></p>
+                                </div>
+                                
+                                <div class="flex items-start gap-3">
+                                    <div class="icon-container bg-secondary/10 dark:bg-secondary/20 h-12 w-12 flex-shrink-0">
+                                        <i class="fas fa-chart-line animated-icon text-secondary dark:text-accent-2"></i>
+                                    </div>
+                                    <p class="text-gray-700 dark:text-gray-300">IA que rastreia e resume tendências de mercado <span class="font-bold text-primary dark:text-accent-1">= Investimentos mais inteligentes</span></p>
+                                </div>
+                                
+                                <div class="flex items-start gap-3">
+                                    <div class="icon-container bg-secondary/10 dark:bg-secondary/20 h-12 w-12 flex-shrink-0">
+                                        <i class="fas fa-headset animated-icon text-secondary dark:text-accent-2"></i>
+                                    </div>
+                                    <p class="text-gray-700 dark:text-gray-300">IA que auxilia o vendedor fazendo pré-atendimento <span class="font-bold text-primary dark:text-accent-1">= Mais atendimento</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute -bottom-12 -left-12 animate-bounce-slow opacity-20">
+                            <i class="fas fa-brain text-8xl text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 section-transition">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">
+                <span class="gradient-text">Tenha Agentes IA</span> treinados para sua empresa
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                    <div class="flex justify-center mb-6">
+                        <div class="icon-container bg-primary/10 dark:bg-primary/20">
+                            <i class="fas fa-comments animated-icon text-primary dark:text-accent-1 animate-pulse-slow"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-4">Conversas naturais e inteligentes</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-center">Sua inteligência artificial será capaz de qualificar leads, agendar reuniões, tirar dúvidas e direcionar clientes ao checkout ou ao vendedor adequado.</p>
+                </div>
+                
+                <div class="card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                    <div class="flex justify-center mb-6">
+                        <div class="icon-container bg-secondary/10 dark:bg-secondary/20">
+                            <i class="fas fa-clock animated-icon text-secondary dark:text-accent-2 animate-spin-slow"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-4">Enquanto sua equipe está Off os Agentes IA estão On</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-center">Seu novo time virtual opera incansavelmente 24/7, atendendo milhares de leads e clientes com bom humor e vontade de trabalhar.</p>
+                </div>
+                
+                <div class="card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                    <div class="flex justify-center mb-6">
+                        <div class="icon-container bg-accent-1/10 dark:bg-accent-1/20">
+                            <i class="fas fa-chart-pie animated-icon text-accent-1 dark:text-accent-1 animate-wiggle"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-4">Tráfego Pago + Agente IA</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-center">Aumente suas conversões substituindo landing pages por Agentes IA em suas campanhas de tráfego pago.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industries Section -->
+    <section id="industries" class="py-20 bg-gray-50 dark:bg-gray-900 section-transition">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">
+                <span>Diversos setores sendo </span>
+                <span class="gradient-text">transformados com IA</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 bg-primary/10 dark:bg-primary/5 rounded-full"></div>
+                    <div class="flex items-start gap-4 relative z-10">
+                        <div class="icon-container bg-primary/10 dark:bg-primary/20 h-12 w-12">
+                            <i class="fas fa-heartbeat animated-icon text-primary dark:text-accent-1 animate-pulse-slow"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3">Saúde</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Agentes IA podem realizar a triagem inicial de pacientes com base nos sintomas, direcionando-os aos especialistas corretos.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 bg-secondary/10 dark:bg-secondary/5 rounded-full"></div>
+                    <div class="flex items-start gap-4 relative z-10">
+                        <div class="icon-container bg-secondary/10 dark:bg-secondary/20 h-12 w-12">
+                            <i class="fas fa-graduation-cap animated-icon text-secondary dark:text-accent-2 animate-bounce-slow"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3">Educação</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Agentes IA podem auxiliar na matrícula de cursos, na cobrança de mensalidades e nas dúvidas acadêmicas frequentes.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 bg-accent-1/10 dark:bg-accent-1/5 rounded-full"></div>
+                    <div class="flex items-start gap-4 relative z-10">
+                        <div class="icon-container bg-accent-1/10 dark:bg-accent-1/20 h-12 w-12">
+                            <i class="fas fa-shopping-cart animated-icon text-accent-1 dark:text-accent-1 animate-float"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3">E-commerce</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Agentes IA podem ajudar a aumentar as conversões, nutrindo e direcionando leads em todas as etapas do funil.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 bg-accent-2/10 dark:bg-accent-2/5 rounded-full"></div>
+                    <div class="flex items-start gap-4 relative z-10">
+                        <div class="icon-container bg-accent-2/10 dark:bg-accent-2/20 h-12 w-12">
+                            <i class="fas fa-chart-bar animated-icon text-accent-2 dark:text-accent-2 animate-wiggle"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3">Vendas</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Agentes IA podem qualificar leads de forma automática, interagindo com potenciais clientes para entender suas necessidades.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 bg-primary/10 dark:bg-primary/5 rounded-full"></div>
+                    <div class="flex items-start gap-4 relative z-10">
+                        <div class="icon-container bg-primary/10 dark:bg-primary/20 h-12 w-12">
+                            <i class="fas fa-headset animated-icon text-primary dark:text-accent-1 animate-pulse-slow"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3">Suporte</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Agentes IA podem lidar com até 70% das demandas e dúvidas frequentes, escalonando questões mais complexas para agentes humanos.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 bg-secondary/10 dark:bg-secondary/5 rounded-full"></div>
+                    <div class="flex items-start gap-4 relative z-10">
+                        <div class="icon-container bg-secondary/10 dark:bg-secondary/20 h-12 w-12">
+                            <i class="fas fa-home animated-icon text-secondary dark:text-accent-2 animate-bounce-slow"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3">Imobiliário</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Agentes IA podem fornecer detalhes instantâneos sobre propriedades, agendar visitas, e direcionar o corretor mais adequado.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 section-transition">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">
+                <span>Inteligência Artificial customizada com o </span>
+                <span class="gradient-text">DNA do seu negócio</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="relative">
+                    <div class="absolute -top-10 -left-10 hidden lg:block">
+                        <div class="w-20 h-20 rounded-full flex items-center justify-center bg-primary text-white text-2xl font-bold animate-pulse-slow">01</div>
+                    </div>
+                    
+                    <div class="card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg h-full">
+                        <div class="flex justify-center mb-6">
+                            <div class="icon-container bg-primary/10 dark:bg-primary/20">
+                                <i class="fas fa-user-tie animated-icon text-primary dark:text-accent-1 animate-float"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold text-center mb-4">Comportamento</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-center">Defina como o seu Atendente de IA deve se comportar, quais ações deve tomar, como deve agir durante a conversa.</p>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute -top-10 -left-10 hidden lg:block">
+                        <div class="w-20 h-20 rounded-full flex items-center justify-center bg-secondary text-white text-2xl font-bold animate-pulse-slow">02</div>
+                    </div>
+                    
+                    <div class="card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg h-full">
+                        <div class="flex justify-center mb-6">
+                            <div class="icon-container bg-secondary/10 dark:bg-secondary/20">
+                                <i class="fas fa-scroll animated-icon text-secondary dark:text-accent-2 animate-float"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold text-center mb-4">Roteiro</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-center">Defina o roteiro obrigatório que o Agente IA deve seguir durante a conversa. Ensine seu processo de vendas para seu novo colaborador virtual.</p>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute -top-10 -left-10 hidden lg:block">
+                        <div class="w-20 h-20 rounded-full flex items-center justify-center bg-accent-1 text-white text-2xl font-bold animate-pulse-slow">03</div>
+                    </div>
+                    
+                    <div class="card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg h-full">
+                        <div class="flex justify-center mb-6">
+                            <div class="icon-container bg-accent-1/10 dark:bg-accent-1/20">
+                                <i class="fas fa-brain animated-icon text-accent-1 dark:text-accent-1 animate-float"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold text-center mb-4">Conhecimento</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-center">Informe seu website e deixe o Agente IA aprender tudo sobre sua empresa. Insira documentos e perguntas frequentes relevantes.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-20 text-center">
+                <a href="#try-free" id="try-free" class="gradient-bg text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl btn inline-block text-lg">
+                    Comece a usar grátis
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid Section -->
+    <section class="py-20 bg-gray-50 dark:bg-gray-900 section-transition">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-16">
+                <div class="grid grid-cols-1 gap-8">
+                    <div class="flex items-start gap-4">
+                        <div class="icon-container bg-primary/10 dark:bg-primary/20 h-12 w-12 flex-shrink-0">
+                            <i class="fas fa-comments-alt animated-icon text-primary dark:text-accent-1"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Acompanhe as conversas</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Acompanhe o que o Agente IA está dizendo e assuma a conversa quando quiser.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4">
+                        <div class="icon-container bg-secondary/10 dark:bg-secondary/20 h-12 w-12 flex-shrink-0">
+                            <i class="fas fa-users animated-icon text-secondary dark:text-accent-2"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Equipe organizada</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Coloque toda sua equipe de humanos e IAs para atender juntos e organizados.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4">
+                        <div class="icon-container bg-accent-1/10 dark:bg-accent-1/20 h-12 w-12 flex-shrink-0">
+                            <i class="fas fa-random animated-icon text-accent-1 dark:text-accent-1"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Fluxo contínuo</h3>
+                            <p class="text-gray-600 dark:text-gray-400">A mesma conversa pode fluir entre ChatBots, Agentes IA e Humanos.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-8">
+                    <div class="flex items-start gap-4">
+                        <div class="icon-container bg-accent-2/10 dark:bg-accent-2/20 h-12 w-12 flex-shrink-0">
+                            <i class="fas fa-paper-plane animated-icon text-accent-2 dark:text-accent-2"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Disparos em massa</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Faça disparos de WhatsApp em massa para sua base de contatos.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4">
+                        <div class="icon-container bg-primary/10 dark:bg-primary/20 h-12 w-12 flex-shrink-0">
+                            <i class="fas fa-chart-line animated-icon text-primary dark:text-accent-1"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Relatórios detalhados</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Tenha relatórios detalhados de todas as conversas, agentes, setores e muito mais.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4">
+                        <div class="icon-container bg-secondary/10 dark:bg-secondary/20 h-12 w-12 flex-shrink-0">
+                            <i class="fas fa-sync-alt animated-icon text-secondary dark:text-accent-2"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Integrações</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Se integra com as principais ferramentas do mercado para otimizar seu fluxo de trabalho.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="py-20 section-transition">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">
+                <span>Nem melhor, nem pior, </span>
+                <span class="gradient-text">diferente!</span>
+            </h2>
+            <p class="text-center text-xl mb-16 text-gray-600 dark:text-gray-400">Entenda as diferenças de Agentes IA e Chatbots</p>
+            
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border-t-4 border-primary">
+                    <div class="flex justify-center mb-6">
+                        <div class="icon-container bg-primary/10 dark:bg-primary/20">
+                            <i class="fas fa-robot animated-icon text-primary dark:text-accent-1 animate-float"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-center mb-6">Agentes IA</h3>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary dark:text-accent-1 mt-1"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Perfeito para ampliar seu time de vendas e suporte, com menor custo.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary dark:text-accent-1 mt-1"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Treinado usando conteúdo sobre sua empresa e seus processos de trabalho.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary dark:text-accent-1 mt-1"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Conversas flexíveis, ajustando-se às necessidades e perguntas do cliente em tempo real.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary dark:text-accent-1 mt-1"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Exemplo de uso: Pré-vendedores (SDR) virtuais, tirando dúvidas e qualificando leads 24/7.</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border-t-4 border-secondary">
+                    <div class="flex justify-center mb-6">
+                        <div class="icon-container bg-secondary/10 dark:bg-secondary/20">
+                            <i class="fas fa-comment-dots animated-icon text-secondary dark:text-accent-2 animate-bounce-slow"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-center mb-6">Chatbots</h3>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-secondary dark:text-accent-2 mt-1"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Perfeito para automatizar tarefas repetitivas e fluxos pré definidos.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-secondary dark:text-accent-2 mt-1"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Construído em uma interface visual intuitiva de fluxos, arrastar e soltar.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-secondary dark:text-accent-2 mt-1"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Conversas e processos lineares e padronizados.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-secondary dark:text-accent-2 mt-1"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Exemplo de uso: Coleta de informações iniciais, direcionamento para setores, automação de processos.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integrations Section -->
+    <section class="py-20 bg-gray-50 dark:bg-gray-900 section-transition">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">
+                <span class="gradient-text">Integrações</span>
+            </h2>
+            <p class="text-center text-xl mb-16 text-gray-600 dark:text-gray-400">Se integra com as principais ferramentas do mercado</p>
+            
+            <div class="flex flex-wrap justify-center gap-12 mb-16">
+                <div class="icon-container bg-gray-100 dark:bg-gray-800 h-16 w-16 flex items-center justify-center">
+                    <i class="fab fa-whatsapp text-2xl text-green-500 animated-icon"></i>
+                </div>
+                <div class="icon-container bg-gray-100 dark:bg-gray-800 h-16 w-16 flex items-center justify-center">
+                    <i class="fas fa-chart-pie text-2xl text-blue-500 animated-icon"></i>
+                </div>
+                <div class="icon-container bg-gray-100 dark:bg-gray-800 h-16 w-16 flex items-center justify-center">
+                    <i class="fas fa-shopping-cart text-2xl text-purple-500 animated-icon"></i>
+                </div>
+                <div class="icon-container bg-gray-100 dark:bg-gray-800 h-16 w-16 flex items-center justify-center">
+                    <i class="fas fa-envelope text-2xl text-red-500 animated-icon"></i>
+                </div>
+                <div class="icon-container bg-gray-100 dark:bg-gray-800 h-16 w-16 flex items-center justify-center">
+                    <i class="fas fa-database text-2xl text-yellow-500 animated-icon"></i>
+                </div>
+                <div class="icon-container bg-gray-100 dark:bg-gray-800 h-16 w-16 flex items-center justify-center">
+                    <i class="fas fa-credit-card text-2xl text-green-500 animated-icon"></i>
+                </div>
+            </div>
+            
+            <p class="text-center text-lg mb-12 text-gray-600 dark:text-gray-400">
+                Envie seus contatos para outras ferramentas, faça disparos quando alguma condição é atendida e não perca nenhum negócio porque alguém esqueceu de realizar uma tarefa no seu CRM.
+            </p>
+            
+            <div class="text-center">
+                <a href="#try-free" class="gradient-bg text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl btn inline-block text-lg">
+                    Experimente grátis
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 section-transition">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">
+                <span class="gradient-text">Dúvidas frequentes</span>
+            </h2>
+            
+            <div class="max-w-3xl mx-auto divide-y divide-gray-200 dark:divide-gray-700">
+                <div class="py-6" x-data="{open: false}">
+                    <button class="flex justify-between items-center w-full text-left font-semibold faq-toggle">
+                        <span class="text-xl">A IA irá substituir minha equipe de atendimento?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300 faq-icon"></i>
+                    </button>
+                    <div class="mt-3 faq-content hidden">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Embora seja possível, recomendamos usar a IA para otimizar seus atendimentos e vendas, sem substituir totalmente a equipe humana. O equilíbrio entre agentes IA e humanos geralmente oferece os melhores resultados.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="py-6" x-data="{open: false}">
+                    <button class="flex justify-between items-center w-full text-left font-semibold faq-toggle">
+                        <span class="text-xl">Quanto tempo leva para começar a usar?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300 faq-icon"></i>
+                    </button>
+                    <div class="mt-3 faq-content hidden">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Treine e implante seus Agentes IA em horas, não semanas. O treinamento da sua IA será feito usando linguagem simples e natural, como se estivesse treinando um colega, sem necessidade de configurações manuais complicadas.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="py-6" x-data="{open: false}">
+                    <button class="flex justify-between items-center w-full text-left font-semibold faq-toggle">
+                        <span class="text-xl">Tem serviço de implementação?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300 faq-icon"></i>
+                    </button>
+                    <div class="mt-3 faq-content hidden">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Sim. Na B3.tec, oferecemos um serviço de Setup especializado, que inclui toda a implementação, desde a configuração dos agentes IA até a otimização dos fluxos de atendimento e integração com outras ferramentas. Esse serviço, disponível por meio de um investimento adicional, assegura que sua solução seja ajustada de maneira eficiente e personalizada.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="py-6" x-data="{open: false}">
+                    <button class="flex justify-between items-center w-full text-left font-semibold faq-toggle">
+                        <span class="text-xl">Preciso ser técnico para configurar?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300 faq-icon"></i>
+                    </button>
+                    <div class="mt-3 faq-content hidden">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Definitivamente não, tudo é feito de forma visual e muito intuitiva. Além do mais estaremos ao seu lado para te ajudar ou até mesmo configurar tudo para você, se preferir.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="py-6" x-data="{open: false}">
+                    <button class="flex justify-between items-center w-full text-left font-semibold faq-toggle">
+                        <span class="text-xl">A IA funciona com processos de vendas complexos?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300 faq-icon"></i>
+                    </button>
+                    <div class="mt-3 faq-content hidden">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Sim, o Agente IA pode aprender e se adaptar a processos de vendas complexos. O B3.tec oferece uma fase dedicada ao treinamento da IA, onde você pode fornecer informações específicas sobre seu negócio, incluindo site, documentos e FAQs. Isso permite que a IA se torne um especialista no seu setor.
+                            <br><br>
+                            Para processos de vendas mais complexos, sugerimos usar a IA como SDR e manter uma equipe humana como closers, assegurando uma abordagem mais eficaz e personalizada.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="py-6" x-data="{open: false}">
+                    <button class="flex justify-between items-center w-full text-left font-semibold faq-toggle">
+                        <span class="text-xl">A IA fala outros idiomas?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300 faq-icon"></i>
+                    </button>
+                    <div class="mt-3 faq-content hidden">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Sim, os Agente IAs podem falar mais de 50 línguas nativamente.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="contact" class="py-20 bg-gray-50 dark:bg-gray-900 section-transition">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                <div class="p-8 md:p-12">
+                    <h2 class="text-3xl font-bold mb-8 text-center">
+                        <span class="gradient-text">Entre em contato</span>
+                    </h2>
+                    
+                    <form id="contact-form" class="space-y-6">
+                        <div class="input-effect">
+                            <input class="effect-20 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 p-4 text-base" type="text" id="name" placeholder="Seu nome" required="">
+                            <span class="focus-border"><i></i></span>
+                        </div>
+                        
+                        <div class="input-effect">
+                            <input class="effect-20 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 p-4 text-base" type="email" id="email" placeholder="Seu e-mail" required="">
+                            <span class="focus-border"><i></i></span>
+                        </div>
+                        
+                        <div class="input-effect">
+                            <input class="effect-20 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 p-4 text-base" type="tel" id="phone" placeholder="Seu telefone">
+                            <span class="focus-border"><i></i></span>
+                        </div>
+                        
+                        <div class="input-effect">
+                            <textarea class="effect-20 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 p-4 text-base" id="message" rows="5" placeholder="Sua mensagem" required=""></textarea>
+                            <span class="focus-border"><i></i></span>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="gradient-bg text-white font-semibold py-4 px-10 rounded-xl shadow-lg hover:shadow-xl btn inline-block text-lg w-full md:w-auto">
+                                Enviar mensagem
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div id="form-success" class="hidden mt-8 p-4 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg text-center">
+                        <p>Sua mensagem foi enviada com sucesso! Entraremos em contato em breve.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-gray-800 text-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <div class="text-3xl font-bold gradient-text mb-6 md:mb-0">B3.tec</div>
+                
+                <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition-colors duration-300">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition-colors duration-300">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition-colors duration-300">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition-colors duration-300">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-8 pb-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="mb-4 md:mb-0">© 2025 B3.tec. Todos os direitos reservados.</p>
+                    <p>
+                        <a href="mailto:b3@b3.tec.br" class="hover:text-accent-1 transition-colors duration-300">b3@b3.tec.br</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // Check user preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Listen for changes to the user's preferred color scheme
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+        
+        // Toggle theme manually
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+        
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            if (mobileMenu.classList.contains('max-h-0')) {
+                mobileMenu.classList.remove('max-h-0', 'opacity-0');
+                mobileMenu.classList.add('max-h-96', 'opacity-100');
+            } else {
+                mobileMenu.classList.remove('max-h-96', 'opacity-100');
+                mobileMenu.classList.add('max-h-0', 'opacity-0');
+            }
+        });
+        
+        // Close mobile menu on link click
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('max-h-96', 'opacity-100');
+                mobileMenu.classList.add('max-h-0', 'opacity-0');
+            });
+        });
+        
+        // FAQ toggle
+        document.querySelectorAll('.faq-toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const content = toggle.nextElementSibling;
+                const icon = toggle.querySelector('.faq-icon');
+                
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    content.classList.add('hidden');
+                    icon.style.transform = 'rotate(0)';
+                }
+            });
+        });
+        
+        // Scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.section-transition').forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Form submission
+        const contactForm = document.getElementById('contact-form');
+        const formSuccess = document.getElementById('form-success');
+        
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Simulate form submission
+            setTimeout(() => {
+                contactForm.reset();
+                contactForm.style.display = 'none';
+                formSuccess.classList.remove('hidden');
+                
+                // Send an email to b3@b3.tec.br
+                // In a real implementation, this would be handled by a backend service
+            }, 1000);
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+
+</body></html>
